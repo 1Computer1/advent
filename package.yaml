@@ -1,0 +1,55 @@
+name:                advent
+version:             0.1.0.0
+github:              "1computer1/advent"
+license:             MIT
+author:              "1Computer"
+maintainer:          "onecomputer00@gmail.com"
+copyright:           "2019 1Computer"
+
+extra-source-files:
+- README.md
+- LICENSE
+
+synopsis:            Advent of code solutions
+category:            Misc
+description:         Please see the README
+
+dependencies:
+- base >= 4.7 && < 5
+- containers
+- template-haskell
+
+default-extensions:
+- BlockArguments
+- ConstraintKinds
+- DataKinds
+- EmptyCase
+- FlexibleContexts
+- FlexibleInstances
+- FunctionalDependencies
+- GADTs
+- KindSignatures
+- LambdaCase
+- MultiParamTypeClasses
+- NamedFieldPuns
+- PatternSynonyms
+- PolyKinds
+- ScopedTypeVariables
+- TypeApplications
+- TypeFamilies
+- TypeOperators
+- ViewPatterns
+
+library:
+  source-dirs: src
+
+executables:
+  advent-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - advent
