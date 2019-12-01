@@ -4,13 +4,13 @@ import Advent.Types
 
 solutionA :: Solution
 solutionA = Solution
-    { parse = map (read @Int) . lines
+    { parse = map read . lines
     , solve = sum . map requiredFuel
     }
 
 solutionB :: Solution
 solutionB = Solution
-    { parse = map (read @Int) . lines
+    { parse = map read . lines
     , solve = sum . map requiredFuelTotal
     }
 
