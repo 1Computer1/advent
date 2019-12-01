@@ -3,7 +3,7 @@ module Boilerplate
     , mkRunner
     ) where
 
-import Language.Haskell.TH
+import Language.Haskell.TH hiding (varE, conT)
 
 data Sub = A | B deriving (Show)
 
@@ -14,24 +14,20 @@ mkYear :: Int -> DecsQ
 mkYear year = do
     let fnName = mkName "run"
         errorClause = Clause [WildP, WildP, WildP]
-            (NormalB (AppE (VarE (mkName "error")) (LitE (StringL "invalid year or day")))) []
+            (NormalB (varE "error" $. litEStr "invalid year or day")) []
     pure
-        [ SigD fnName
-            (ConT (mkName "Int")
-                -:> ConT (mkName "Int")
-                -:> ConT (mkName "Sub")
-                -:> AppT (ConT (mkName "IO")) (TupleT 0))
+        [ SigD fnName $
+            conT "Int"
+                -:> conT "Int"
+                -:> conT "Sub"
+                -:> conT "IO" $: TupleT 0
         , FunD fnName (concatMap (mkClauses year) [1..25] <> [errorClause])
         ]
 
-infixr 2 -:>
-(-:>) :: Type -> Type -> Type
-x -:> y = AppT (AppT ArrowT x) y
-
 mkClauses :: Int -> Int -> [Clause]
 mkClauses year day =
-    let yearPat = LitP (IntegerL (fromIntegral year))
-        dayPat = LitP (IntegerL (fromIntegral day))
+    let yearPat = litPInt year
+        dayPat = litPInt day
     in
         {-
             run 2019 1 A = ...
@@ -43,7 +39,7 @@ mkClauses year day =
 
 mkRun :: Int -> Int -> Sub -> Exp
 mkRun year day sub =
-    let solName = mkName $ "Advent.Year" <> show year <> ".Day" <> pad day <> ".solution" <> show sub
+    let solVar = varE $ "Advent.Year" <> show year <> ".Day" <> pad day <> ".solution" <> show sub
         filepath = "./input/year" <> show year <> "/day" <> pad day <> ".txt"
         output = show year <> "-12-" <> pad day <> "-" <> show sub <> ":"
     {-
@@ -54,11 +50,35 @@ mkRun year day sub =
             putStrLn ""
     -}
     in DoE
-        [ BindS (VarP (mkName "input")) (AppE (VarE (mkName "readFile")) (LitE (StringL filepath)))
-        , NoBindS (AppE (VarE (mkName "putStrLn")) (LitE (StringL output)))
-        , NoBindS (AppE (AppE (VarE (mkName "runSolution")) (VarE solName)) (VarE (mkName "input")))
-        , NoBindS (AppE (VarE (mkName "putStrLn")) (LitE (StringL "")))
+        [ BindS (VarP (mkName "input")) (varE "readFile" $. litEStr filepath)
+        , NoBindS (varE "putStrLn" $. litEStr output)
+        , NoBindS (varE "runSolution" $. solVar $. varE "input")
+        , NoBindS (varE "putStrLn" $. litEStr "")
         ]
 
 pad :: Int -> String
 pad n = let s = show n in if length s == 1 then '0':s else s
+
+infixr 2 -:>
+(-:>) :: Type -> Type -> Type
+x -:> y = AppT (AppT ArrowT x) y
+
+infixl 3 $:
+($:) :: Type -> Type -> Type
+($:) = AppT
+
+infixl 3 $.
+($.) :: Exp -> Exp -> Exp
+($.) = AppE
+
+varE :: String -> Exp
+varE = VarE . mkName
+
+conT :: String -> Type
+conT = ConT . mkName
+
+litEStr :: String -> Exp
+litEStr = LitE . StringL
+
+litPInt :: Integral a => a -> Pat
+litPInt = LitP . IntegerL . fromIntegral
