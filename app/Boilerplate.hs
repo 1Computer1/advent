@@ -3,16 +3,25 @@ module Boilerplate
     , mkRunner
     ) where
 
+import Control.Monad
+import Data.List
+import Data.Maybe
 import Language.Haskell.TH hiding (varE, conT)
+import System.Directory
 
 data Sub = A | B deriving (Show)
 
-mkRunner :: [Int] -> DecsQ
-mkRunner years = concat <$> mapM mkYear years
+getAvailableSolutions :: IO [(Int, [Int])]
+getAvailableSolutions = do
+    years <- map read . mapMaybe (stripPrefix "Year") <$> listDirectory "./src/Advent/"
+    forM years \year -> do
+        days <- map (read . take 2) . mapMaybe (stripPrefix "Day") <$> listDirectory ("./src/Advent/Year" <> show year)
+        pure (year, days)
 
-mkYear :: Int -> DecsQ
-mkYear year = do
-    let fnName = mkName "run"
+mkRunner :: String -> DecsQ
+mkRunner name = do
+    solutions <- runIO getAvailableSolutions
+    let fnName = mkName name
         errorClause = Clause [WildP, WildP, WildP]
             (NormalB (varE "error" $. litEStr "invalid year or day")) []
     pure
@@ -21,24 +30,27 @@ mkYear year = do
                 -:> conT "Int"
                 -:> conT "Sub"
                 -:> conT "IO" $: TupleT 0
-        , FunD fnName (concatMap (mkClauses year) [1..25] <> [errorClause])
+        , FunD fnName (concatMap (uncurry mkClauses) solutions <> [errorClause])
         ]
 
-mkClauses :: Int -> Int -> [Clause]
-mkClauses year day =
+mkClauses :: Int -> [Int] -> [Clause]
+mkClauses year days = concatMap (mkClause year) days
+
+mkClause :: Int -> Int -> [Clause]
+mkClause year day =
     let yearPat = litPInt year
         dayPat = litPInt day
     in
-        {-
-            run 2019 1 A = ...
-            run 2019 1 B = ...
-        -}
-        [ Clause [yearPat, dayPat, ConP (mkName "A") []] (NormalB (mkRun year day A)) []
-        , Clause [yearPat, dayPat, ConP (mkName "B") []] (NormalB (mkRun year day B)) []
-        ]
+    {-
+        run 2019 1 A = ...
+        run 2019 1 B = ...
+    -}
+    [ Clause [yearPat, dayPat, ConP (mkName "A") []] (NormalB (mkBody year day A)) []
+    , Clause [yearPat, dayPat, ConP (mkName "B") []] (NormalB (mkBody year day B)) []
+    ]
 
-mkRun :: Int -> Int -> Sub -> Exp
-mkRun year day sub =
+mkBody :: Int -> Int -> Sub -> Exp
+mkBody year day sub =
     let solVar = varE $ "Advent.Year" <> show year <> ".Day" <> pad day <> ".solution" <> show sub
         filepath = "./input/year" <> show year <> "/day" <> pad day <> ".txt"
         output = show year <> "-12-" <> pad day <> "-" <> show sub <> ":"

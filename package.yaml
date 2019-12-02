@@ -17,6 +17,7 @@ description:         Please see the README
 dependencies:
 - base >= 4.7 && < 5
 - containers
+- directory
 - template-haskell
 
 default-extensions:
