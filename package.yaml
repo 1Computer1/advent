@@ -18,7 +18,11 @@ dependencies:
 - base >= 4.7 && < 5
 - containers
 - directory
+- split
+- mtl
 - template-haskell
+- transformers
+- vector
 
 default-extensions:
 - BlockArguments
