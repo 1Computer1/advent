@@ -2,6 +2,15 @@
 
 module Main where
 
+import qualified Advent.Year2018.Day01
+import qualified Advent.Year2018.Day02
+import qualified Advent.Year2018.Day03
+import qualified Advent.Year2018.Day04
+import qualified Advent.Year2018.Day05
+import qualified Advent.Year2018.Day06
+import qualified Advent.Year2018.Day07
+import qualified Advent.Year2018.Day08
+
 import qualified Advent.Year2019.Day01
 import qualified Advent.Year2019.Day02
 
