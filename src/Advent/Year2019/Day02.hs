@@ -8,22 +8,20 @@ import qualified Data.Vector as V
 import           Data.Vector (Vector, (!), (//))
 
 solutionA :: Solution
-solutionA = Solution
-    { parse = V.fromList . map read . splitOn ","
-    , solve = runReplacing 12 2
-    }
+solutionA = Solution $ runReplacing 12 2 . parse
 
 solutionB :: Solution
-solutionB = Solution
-    { parse = V.fromList . map read . splitOn ","
-    , solve = \xs ->
-        let choices = (,) <$> [1..99] <*> [1..99]
-            target = 19690720
-            Just (noun, verb) = find (\(x, y) -> runReplacing x y xs == target) choices
-        in 100 * noun + verb
-    }
+solutionB = Solution \input ->
+    let memory = parse input
+        choices = (,) <$> [1..99] <*> [1..99]
+        target = 19690720
+        Just (noun, verb) = find (\(x, y) -> runReplacing x y memory == target) choices
+    in 100 * noun + verb
 
 type Memory = Vector Int
+
+parse :: String -> Memory
+parse = V.fromList . map read . splitOn ","
 
 runReplacing :: Int -> Int -> Memory -> Int
 runReplacing noun verb = runProgram . replaceNounVerb noun verb

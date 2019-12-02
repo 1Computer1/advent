@@ -3,16 +3,13 @@ module Advent.Year2019.Day01 where
 import Advent.Types
 
 solutionA :: Solution
-solutionA = Solution
-    { parse = map read . lines
-    , solve = sum . map requiredFuel
-    }
+solutionA = Solution $ sum . map requiredFuel . parse
 
 solutionB :: Solution
-solutionB = Solution
-    { parse = map read . lines
-    , solve = sum . map requiredFuelTotal
-    }
+solutionB = Solution $ sum . map requiredFuelTotal . parse
+
+parse :: String -> [Int]
+parse = map read . lines
 
 requiredFuel :: Int -> Int
 requiredFuel x = x `div` 3 - 2

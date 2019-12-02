@@ -64,7 +64,7 @@ mkBody year day sub =
     in DoE
         [ BindS (VarP (mkName "input")) (varE "readFile" $. litEStr filepath)
         , NoBindS (varE "putStrLn" $. litEStr output)
-        , NoBindS (varE "runSolution" $. solVar $. varE "input")
+        , NoBindS (varE "putStrLn" $. (varE "runSolution" $. solVar $. varE "input"))
         , NoBindS (varE "putStrLn" $. litEStr "")
         ]
 
