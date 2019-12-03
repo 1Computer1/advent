@@ -15,12 +15,11 @@ category:            Misc
 description:         Please see the README
 
 dependencies:
+- parsec
 - base >= 4.7 && < 5
 - containers
-- directory
 - split
 - mtl
-- template-haskell
 - transformers
 - vector
 
@@ -59,3 +58,6 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - advent
+    - directory
+    - template-haskell
+    - optparse-applicative

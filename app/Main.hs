@@ -10,31 +10,27 @@ import qualified Advent.Year2018.Day05
 import qualified Advent.Year2018.Day06
 import qualified Advent.Year2018.Day07
 import qualified Advent.Year2018.Day08
-
 import qualified Advent.Year2019.Day01
 import qualified Advent.Year2019.Day02
 
 import           Advent.Types
-import           Boilerplate
-import           Data.Char
-import           System.Environment
+import           Control.Monad
+import           Interface
+import           Solution
+import           Types
 
-mkRunner "run"
-
-usage :: String
-usage = "Usage: advent <year> [day{A,B}...]"
+mkSolutions "getSolution"
 
 main :: IO ()
 main = do
-    args <- getArgs
-    case args of
-        []  -> putStrLn usage
-        [_] -> putStrLn usage
-        (y:xs) -> mapM_ (uncurry (run (read y)) . parseProblem) xs
-
-parseProblem :: String -> (Int, Sub)
-parseProblem xs =
-    case span isDigit xs of
-        (day, sub:_) ->
-            (read day, case toLower sub of 'a' -> A; 'b' -> B; _ -> error "could not parse subproblem")
-        _ -> error "could not parse problem"
+    Options { year, problems } <- getOptions
+    forM_ problems \(day, part) -> do
+        let filepath = "./input/year" <> show year <> "/day" <> padDay day <> ".txt"
+            header = show year <> "-" <> padDay day <> "" <> showPartLower part <> ":"
+        putStrLn header
+        case getSolution year day part of
+            Nothing -> putStrLn "unavailable solution"
+            Just solution -> do
+                input <- readFile filepath
+                putStrLn $ runSolution solution input
+        putStrLn ""
