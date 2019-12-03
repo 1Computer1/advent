@@ -1,8 +1,8 @@
 module Advent.Year2018.Day02 where
 
-import Advent.Types
-import Data.List (find, foldl', tails)
-import Data.Map (toList, fromListWith)
+import           Advent.Types
+import           Data.List
+import qualified Data.Map as M
 
 solutionA :: Solution
 solutionA = Solution $ checksum . lines
@@ -20,11 +20,11 @@ checksum = uncurry (*) . countRepeats
 
         hasRepeats = foldl' hasRepeat (False, False) . map snd . frequencies
             where
-                hasRepeat (r2, r3) 2 = (True, r3)
-                hasRepeat (r2, r3) 3 = (r2, True)
+                hasRepeat (_, r3) 2 = (True, r3)
+                hasRepeat (r2, _) 3 = (r2, True)
                 hasRepeat rs _ = rs
 
-        frequencies = toList . fromListWith (+) . map (, 1)
+        frequencies = M.toList . M.fromListWith (+) . map (, 1 :: Int)
 
 common :: Eq a => [[a]] -> [a]
 common = map fst . filter (uncurry (==)) . uncurry zip . correctPair

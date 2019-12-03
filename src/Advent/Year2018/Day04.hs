@@ -50,19 +50,20 @@ intervals = concatMap (mapMaybe (uncurry toInterval) . (zip <*> drop 1))
 
 guardNum :: Action -> Int
 guardNum (Action { kind = Guard n }) = n
+guardNum _ = error "unsupported action"
 
 parse :: String -> [[[Action]]]
 parse = groupBy ((==) `on` guardNum . head)
             . sortBy (compare `on` guardNum . head)
             . groupBy actionEq
             . sort
-            . map parse
+            . map parseOne
             . lines
     where
         actionEq _ (Action { kind = Guard _ }) = False
         actionEq _ _ = True
 
-        parse s0 = let
+        parseOne s0 = let
             '[':_:_:_:_:'-':l1:l2:'-':d1:d2:' ':h1:h2:':':m1:m2:']':' ':c:s1 = s0
             time = Time { month = read [l1, l2],
                           day = read [d1, d2],
@@ -75,6 +76,7 @@ parse = groupBy ((==) `on` guardNum . head)
                     in Action { kind = Guard (read num), time }
                 'f' -> Action { kind = Sleep, time }
                 'w' -> Action { kind = Wake, time }
+                _ -> error "invalid input"
 
 solveWith :: ([[Action]] -> Int) -> [[[Action]]] -> Int
 solveWith f = liftA2 (*) (guardNum . head . head) (fst . maxMinute) . maximumBy (compare `on` f)

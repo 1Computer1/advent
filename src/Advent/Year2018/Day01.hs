@@ -1,7 +1,7 @@
 module Advent.Year2018.Day01 where
 
-import Advent.Types
-import Data.Set (member, empty, insert)
+import           Advent.Types
+import qualified Data.Set as S
 
 solutionA :: Solution
 solutionA = Solution $ sum . parse
@@ -16,7 +16,7 @@ parse = map readNum . lines
         readNum xs = read xs
 
 firstRepeat :: [Int] -> Int
-firstRepeat = fst . head . dropWhile notRepeated . scanl nextResult (0, empty) . cycle
+firstRepeat = fst . head . dropWhile notRepeated . scanl nextResult (0, S.empty) . cycle
     where
-        notRepeated = not . uncurry member
-        nextResult (x, xs) d = (x + d, insert x xs)
+        notRepeated = not . uncurry S.member
+        nextResult (x, xs) d = (x + d, S.insert x xs)

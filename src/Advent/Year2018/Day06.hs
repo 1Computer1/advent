@@ -2,13 +2,11 @@ module Advent.Year2018.Day06 where
 
 import           Advent.Types
 import           Data.Char (isDigit)
-import           Data.Function (on)
-import           Data.List (maximumBy, minimumBy)
-import qualified Data.Map.Strict as Map
 import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as M
 import           Data.Maybe (mapMaybe)
-import qualified Data.Set as Set
 import           Data.Set (Set)
+import qualified Data.Set as S
 
 solutionA :: Solution
 solutionA = Solution $ (maximumFiniteArea <*> borderCoords) . parse
@@ -31,7 +29,7 @@ allPoints :: (Int, Int, Int, Int) -> [(Int, Int)]
 allPoints (minX, maxX, minY, maxY) = [(x, y) | x <- [minX..maxX], y <- [minY..maxY]]
 
 generateGraph :: [(Int, Int)] -> [(Int, Int)] -> Map (Int, Int) (Int, Int)
-generateGraph ps qs = Map.fromList $ mapMaybe (\q -> (q, ) <$> closestPointIn ps q) qs
+generateGraph ps qs = M.fromList $ mapMaybe (\q -> (q, ) <$> closestPointIn ps q) qs
 
 closestPointIn :: [(Int, Int)] -> (Int, Int) -> Maybe (Int, Int)
 closestPointIn ps q = go [] ps
@@ -49,11 +47,11 @@ maximumFiniteArea ps border = maximumArea . removeInfinites $ graph
     where
         graph = generateGraph ps (allPoints border)
         infinites = infiniteSourcesOf border graph
-        removeInfinites = Map.filter (not . flip Set.member infinites)
-        maximumArea = maximum . Map.elems . Map.fromListWith (+) . Map.foldlWithKey' (\ a _ v -> (v, 1):a) []
+        removeInfinites = M.filter (not . flip S.member infinites)
+        maximumArea = maximum . M.elems . M.fromListWith (+) . M.foldlWithKey' (\ a _ v -> (v, 1):a) []
 
 infiniteSourcesOf :: (Int, Int, Int, Int) -> Map (Int, Int) (Int, Int) -> Set (Int, Int)
-infiniteSourcesOf (minX, maxX, minY, maxY) = Set.fromList . Map.elems . Map.filterWithKey (const . onBorder)
+infiniteSourcesOf (minX, maxX, minY, maxY) = S.fromList . M.elems . M.filterWithKey (const . onBorder)
     where 
         onBorder p = p `elem` xEdges || p `elem` yEdges
         xEdges = [(x, y) | x <- [minX..maxX], y <- [minY, maxY]]

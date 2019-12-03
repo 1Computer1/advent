@@ -1,7 +1,6 @@
 module Advent.Year2018.Day05 where
 
 import Advent.Types
-import Control.Monad (mapM)
 import Data.Char (toUpper)
 import Data.Function (on)
 

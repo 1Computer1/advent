@@ -1,17 +1,18 @@
 module Advent.Year2018.Day03 where
 
-import Advent.Types
-import Control.Applicative (liftA2)
-import Data.Char (isDigit)
-import Data.Function (on)
-import Data.List (tails, foldl')
-import Data.Set (Set, difference, elems, empty, fromDistinctAscList, fromList, insert, intersection, union, unions)
+import           Advent.Types
+import           Control.Applicative (liftA2)
+import           Data.Char (isDigit)
+import           Data.Function (on)
+import           Data.List (tails, foldl')
+import qualified Data.Set as S
+import           Data.Set (Set)
 
 solutionA :: Solution
 solutionA = Solution $ length . overlappingPoints . parse
 
 solutionB :: Solution
-solutionB = Solution $ head . elems . liftA2 difference fromDistinctAscList overlappingClaims . parse
+solutionB = Solution $ head . S.elems . liftA2 S.difference S.fromDistinctAscList overlappingClaims . parse
 
 data Claim = Claim
     { num :: Int
@@ -44,23 +45,23 @@ parse :: String -> [Claim]
 parse = map read . lines
 
 overlapsBy :: Ord a => (Claim -> [Claim] -> Set a) -> [Claim] -> Set a
-overlapsBy f = foldl' g empty . searchSpace
+overlapsBy f = foldl' g S.empty . searchSpace
     where
         searchSpace = zip <*> drop 1 . tails
 
         g a (c, cs) = case filter (intersects c) cs of
             [] -> a
-            cs' -> union a (f c cs')
+            cs' -> S.union a (f c cs')
     
         intersects (Claim { x = x1, y = y1, w = w1, h = h1 })
                    (Claim { x = x2, y = y2, w = w2, h = h2 }) = and [x1 <= x2 + w2, x1 + w1 >= x2,
                                                                      y1 <= y2 + h2, y1 + h1 >= y2]
 
 overlappingPoints :: [Claim] -> Set (Int, Int)
-overlappingPoints = overlapsBy (\c cs -> unions . map (intersectionPoints c) $ cs)
+overlappingPoints = overlapsBy (\c cs -> S.unions . map (intersectionPoints c) $ cs)
     where
-        intersectionPoints = intersection `on` fromList . toPoints
+        intersectionPoints = S.intersection `on` S.fromList . toPoints
         toPoints (Claim { x, y, w, h }) = [(x', y') | x' <- [x..x + w - 1], y' <- [y..y + h - 1]]
 
 overlappingClaims :: [Claim] -> Set Claim
-overlappingClaims = overlapsBy (\c cs -> fromList (c:cs))
+overlappingClaims = overlapsBy (\c cs -> S.fromList (c:cs))
