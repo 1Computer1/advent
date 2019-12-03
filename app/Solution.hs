@@ -66,8 +66,5 @@ conE = ConE . mkName
 conT :: String -> Type
 conT = ConT . mkName
 
-litEStr :: String -> Exp
-litEStr = LitE . StringL
-
 litPInt :: Integral a => a -> Pat
 litPInt = LitP . IntegerL . fromIntegral

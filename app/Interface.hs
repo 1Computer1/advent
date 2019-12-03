@@ -3,9 +3,7 @@ module Interface
     , getOptions
     ) where
 
-import           Data.Char
 import           Options.Applicative
-import           Solution
 import qualified Text.Parsec as P
 import           Types
 
