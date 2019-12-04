@@ -14,6 +14,7 @@ import qualified Advent.Year2018.Day08
 import qualified Advent.Year2019.Day01
 import qualified Advent.Year2019.Day02
 import qualified Advent.Year2019.Day03
+import qualified Advent.Year2019.Day04
 
 import           Advent.Types
 import           Control.Monad
