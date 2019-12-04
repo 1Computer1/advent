@@ -20,6 +20,7 @@ import           Advent.Types
 import           Control.Monad
 import           Interface
 import           Solution
+import           System.CPUTime
 import           Types
 
 mkSolutions "getSolution"
@@ -35,5 +36,9 @@ main = do
             Nothing -> putStrLn "unavailable solution"
             Just solution -> do
                 input <- readFile filepath
+                start <- getCPUTime
                 putStrLn $ runSolution solution input
+                end <- getCPUTime
+                let diff = fromIntegral (end - start) / 10e9
+                putStrLn $ "Runtime: " <> show diff <> "ms"
         putStrLn ""
