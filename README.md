@@ -9,3 +9,4 @@ This workspace is convenient, kinda:
 - `Advent.Types` has a `Solution` type that encapsulates a solution.
 
 Feel free to use this as a template for yourself, maybe add tests and benchmarks or something.  
+Checkout the `no-solutions` branch for the workspace with no spoilers that you can use right away.  
