@@ -24,7 +24,7 @@ nonDecreasingCandidates accepts lo hi =
 -- n must be 6 digits, non-decreasing, and not 999999
 nextNonDecreasing :: ([Int] -> Bool) -> Int -> Int
 nextNonDecreasing accepts n =
-    if accepts ds
+    if accepts (digits result)
         then result
         else nextNonDecreasing accepts result
     where
