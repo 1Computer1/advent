@@ -5,43 +5,49 @@ import Data.List
 import Data.List.Split
 
 solutionA :: Solution
-solutionA = Solution $ length . filter hasDouble . uncurry nonDecreasingCandidates . parse
+solutionA = Solution $ length . uncurry (nonDecreasingCandidates hasDouble) . parse
 
 solutionB :: Solution
-solutionB = Solution $ length . filter hasExactDouble . uncurry nonDecreasingCandidates . parse
+solutionB = Solution $ length . uncurry (nonDecreasingCandidates hasExactDouble) . parse
 
 parse :: String -> (Int, Int)
 parse xs = let [lo, hi] = splitOn "-" xs in (read lo, read hi)
 
-nonDecreasingCandidates :: Int -> Int -> [Int]
-nonDecreasingCandidates lo hi = fst . break (>= hi) $ iterate nextNonDecreasing ndLo
-    where
-        ndLo = head $ filter nonDecreasing [lo..]
+nonDecreasingCandidates :: ([Int] -> Bool) -> Int -> Int -> [Int]
+nonDecreasingCandidates accepts lo hi =
+    let ndLo = head $ filter nonDecreasing [lo..]
+        xs = fst . break (>= hi) $ iterate (nextNonDecreasing accepts) ndLo
+    in if accepts (digits ndLo)
+        then xs
+        else tail xs
 
 -- n must be 6 digits, non-decreasing, and not 999999
-nextNonDecreasing :: Int -> Int
-nextNonDecreasing n =
-    case findIndex (\i -> ds !! i == 9) [1..5] of
-        Just i ->
-            let incr = (ds !! i + 1) * rep (6 - i)
-                rest = n `div` 10 ^ (6 - i) * 10 ^ (6 - i)
-            in incr + rest
-        Nothing -> n + 1
+nextNonDecreasing :: ([Int] -> Bool) -> Int -> Int
+nextNonDecreasing accepts n =
+    if accepts ds
+        then result
+        else nextNonDecreasing accepts result
     where
+        result = case findIndex (== 9) (tail ds) of
+            Just i ->
+                let incr = (ds !! i + 1) * rep (6 - i)
+                    rest = n `div` 10 ^ (6 - i) * 10 ^ (6 - i)
+                in incr + rest
+            Nothing -> n + 1
         ds = digits n
         rep i = (10 ^ i - 1) `div` 9
 
 nonDecreasing :: Int -> Bool
-nonDecreasing = all (uncurry (<=)) . adjacents
+nonDecreasing = all (uncurry (<=)) . adjacents . digits
 
-hasDouble :: Int -> Bool
+hasDouble :: [Int] -> Bool
 hasDouble = any (uncurry (==)) . adjacents
 
-hasExactDouble :: Int -> Bool
+hasExactDouble :: [Int] -> Bool
 hasExactDouble = any (\((a, b):xs) -> null xs && a == b) . group . adjacents
 
-adjacents :: Int -> [(Int, Int)]
-adjacents = (zip <*> tail) . digits
+adjacents :: [a] -> [(a, a)]
+adjacents = zip <*> tail
 
 -- n must be 6 digits, digits are indexed as in 012345
 digits :: Int -> [Int]
