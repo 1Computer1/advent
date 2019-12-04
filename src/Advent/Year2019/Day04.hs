@@ -16,15 +16,15 @@ parse xs = let [lo, hi] = splitOn "-" xs in (read lo, read hi)
 nonDecreasingCandidates :: ([Int] -> Bool) -> Int -> Int -> [Int]
 nonDecreasingCandidates accepts lo hi =
     let ndLo = head $ filter nonDecreasing [lo..]
-        xs = fst . break (>= hi) $ iterate (nextNonDecreasing accepts) ndLo
-    in if accepts (digits ndLo)
+        xs = takeWhile (<= hi) $ iterate (nextNonDecreasing accepts) ndLo
+    in if accepts $ digits ndLo
         then xs
         else tail xs
 
 -- n must be 6 digits, non-decreasing, and not 999999
 nextNonDecreasing :: ([Int] -> Bool) -> Int -> Int
 nextNonDecreasing accepts n =
-    if accepts (digits result)
+    if accepts $ digits result
         then result
         else nextNonDecreasing accepts result
     where
