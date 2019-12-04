@@ -39,6 +39,6 @@ main = do
                 start <- getCPUTime
                 putStrLn $ runSolution solution input
                 end <- getCPUTime
-                let diff = fromIntegral (end - start) / 10e9
+                let diff = fromIntegral (end - start) / 10e9 :: Double
                 putStrLn $ "Runtime: " <> show diff <> "ms"
         putStrLn ""
