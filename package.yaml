@@ -17,9 +17,9 @@ description:         Please see the README
 dependencies:
 - base >= 4.7 && < 5
 - containers
-- split
 - mtl
 - parsec
+- split
 - transformers
 - vector
 
@@ -60,5 +60,5 @@ executables:
     dependencies:
     - advent
     - directory
-    - template-haskell
     - optparse-applicative
+    - template-haskell
