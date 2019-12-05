@@ -3,7 +3,6 @@ module Advent.Year2019.Day05 where
 import           Advent.Types
 import           Control.Monad.RWS
 import           Data.List.Split
-import           Data.Monoid
 import qualified Data.Vector as V
 import           Data.Vector (Vector, (!), (//))
 
