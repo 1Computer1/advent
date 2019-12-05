@@ -59,6 +59,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - advent
+    - clock
+    - deepseq
     - directory
     - optparse-applicative
     - template-haskell

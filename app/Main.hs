@@ -18,10 +18,12 @@ import qualified Advent.Year2019.Day04
 import qualified Advent.Year2019.Day05
 
 import           Advent.Types
+import           Control.DeepSeq (force)
+import           Control.Exception (evaluate)
 import           Control.Monad
 import           Interface
 import           Solution
-import           System.CPUTime
+import           System.Clock
 import           Types
 
 mkSolutions "getSolution"
@@ -37,9 +39,10 @@ main = do
             Nothing -> putStrLn "unavailable solution"
             Just solution -> do
                 input <- readFile filepath
-                start <- getCPUTime
-                putStrLn $ runSolution solution input
-                end <- getCPUTime
-                let diff = fromIntegral (end - start) / 10e9 :: Double
-                putStrLn $ "Runtime: " <> show diff <> "ms"
+                start <- getTime Monotonic
+                output <- evaluate . force $ runSolution solution input
+                end <- getTime Monotonic
+                let diff = diffTimeSpec start end
+                putStrLn output
+                putStrLn $ "Runtime: " <> show (fromIntegral (toNanoSecs diff) / 10^6 :: Double) <> "ms"
         putStrLn ""
