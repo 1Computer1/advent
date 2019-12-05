@@ -3,6 +3,7 @@ module Advent.Year2019.Day05 where
 import           Advent.Types
 import           Control.Monad.RWS
 import           Data.List.Split
+import           Data.Monoid
 import qualified Data.Vector as V
 import           Data.Vector (Vector, (!), (//))
 
@@ -17,7 +18,9 @@ data Memory = Memory
     , pointer :: Int
     }
 
-type Program = RWS Int [Int] Memory
+type Program = RWS Int (DList Int) Memory
+
+type DList a = Endo [a]
 
 data Op
     = End
@@ -38,7 +41,7 @@ parse :: String -> Vector Int
 parse = V.fromList . map read . splitOn ","
 
 runProgram :: Int -> Vector Int -> [Int]
-runProgram input xs = snd $ evalRWS execute input (Memory xs 0)
+runProgram input xs = flip appEndo [] . snd $ evalRWS execute input (Memory xs 0)
 
 execute :: Program ()
 execute = do
@@ -72,7 +75,7 @@ runOp op ms = do
             move 2
         Output -> do
             output <- valueAt 1
-            tell [output]
+            tell $ singleton output
             move 2
         JumpTrue -> do
             x <- valueAt 1
@@ -150,6 +153,9 @@ parseMode = \case
 -- Digits are indexed as in 543210
 digits :: Int -> [Int]
 digits n = map (\i -> (n `div` 10 ^ (5 - i)) `mod` 10) [5, 4..0 :: Int]
+
+singleton :: a -> DList a
+singleton x = Endo ([x] <>)
 
 for :: [a] -> (a -> b) -> [b]
 for = flip map
