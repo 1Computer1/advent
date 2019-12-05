@@ -5,46 +5,46 @@ import Data.List
 import Data.List.Split
 
 solutionA :: Solution
-solutionA = Solution $ length . uncurry (nonDecreasingCandidates hasDouble) . parse
+solutionA = Solution $ length . uncurry (passwordCandidates hasDouble) . parse
 
 solutionB :: Solution
-solutionB = Solution $ length . uncurry (nonDecreasingCandidates hasExactDouble) . parse
+solutionB = Solution $ length . uncurry (passwordCandidates hasExactDouble) . parse
 
 parse :: String -> (Int, Int)
 parse xs = let [lo, hi] = splitOn "-" xs in (read lo, read hi)
 
-nonDecreasingCandidates :: ([Int] -> Bool) -> Int -> Int -> [Int]
-nonDecreasingCandidates accepts lo hi =
-    let ndLo = head $ filter nonDecreasing [lo..]
-        xs = takeWhile (<= hi) $ iterate (nextNonDecreasing accepts) ndLo
-    in if accepts $ digits ndLo
-        then xs
-        else tail xs
+passwordCandidates :: ([(Int, Int)] -> Bool) -> Int -> Int -> [Int]
+passwordCandidates accepts lo hi = takeWhile (<= hi) . tail $ iterate' (nextPassword accepts) lo
 
 -- n must be 6 digits, non-decreasing, and not 999999
-nextNonDecreasing :: ([Int] -> Bool) -> Int -> Int
-nextNonDecreasing accepts n =
-    if accepts $ digits result
+nextPassword :: ([(Int, Int)] -> Bool) -> Int -> Int
+nextPassword accepts n =
+    if accepts as
         then result
-        else nextNonDecreasing accepts result
+        else nextPassword accepts result
     where
-        result = case findIndex (== 9) (tail ds) of
-            Just i ->
-                let incr = (ds !! i + 1) * rep (6 - i)
-                    rest = n `div` 10 ^ (6 - i) * 10 ^ (6 - i)
-                in incr + rest
-            Nothing -> n + 1
+        (result, as) = closestNonDecreasing (n + 1)
+
+-- n must be 6 digits
+closestNonDecreasing :: Int -> (Int, [(Int, Int)])
+closestNonDecreasing n =
+    case findIndex (\(x, y) -> x > y) as of
+        Just i ->
+            let d = ds !! i
+                incr = d * rep (6 - i)
+                rest = n `div` 10 ^ (6 - i) * 10 ^ (6 - i)
+            in (incr + rest, take i as <> replicate (6 - i - 1) (d, d))
+        Nothing -> (n, as)
+    where
         ds = digits n
+        as = adjacents ds
         rep i = (10 ^ i - 1) `div` 9
 
-nonDecreasing :: Int -> Bool
-nonDecreasing = all (uncurry (<=)) . adjacents . digits
+hasDouble :: [(Int, Int)] -> Bool
+hasDouble = any (uncurry (==))
 
-hasDouble :: [Int] -> Bool
-hasDouble = any (uncurry (==)) . adjacents
-
-hasExactDouble :: [Int] -> Bool
-hasExactDouble = any (\((a, b):xs) -> null xs && a == b) . group . adjacents
+hasExactDouble :: [(Int, Int)] -> Bool
+hasExactDouble = any (\((a, b):xs) -> null xs && a == b) . group 
 
 adjacents :: [a] -> [(a, a)]
 adjacents = zip <*> tail
