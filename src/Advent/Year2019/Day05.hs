@@ -2,11 +2,9 @@ module Advent.Year2019.Day05 where
 
 import           Advent.Types
 import           Control.Monad.RWS
-import           Data.List
 import           Data.List.Split
 import qualified Data.Vector as V
 import           Data.Vector (Vector, (!), (//))
-import           Debug.Trace
 
 solutionA :: Solution
 solutionA = Solution $ runProgram 1 . parse
