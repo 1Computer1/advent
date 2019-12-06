@@ -10,11 +10,12 @@ import           Data.List
 import           Data.List.Split
 import qualified Data.Map.Strict as M
 import           Data.Map.Strict (Map, (!))
+import           Data.Maybe
 import           Lens.Micro.Platform
 
 data Universe = Universe
-    { _graph :: !UGr
-    , _nodes :: !(Map String G.Node)
+    { _graph :: UGr
+    , _nodes :: Map String G.Node
     }
 
 makeLenses ''Universe
@@ -47,13 +48,15 @@ totalOrbits (Universe gr ns) = go 0 (ns ! "COM")
             [] -> n
             ks -> foldl' (+) n $ map (go (n + 1) . view _2) ks
 
-findSanta :: Universe -> G.Path
-findSanta (Universe gr ns) = G.esp (ns ! "YOU") (ns ! "SAN") (G.undir gr)
+findSanta :: Universe -> Int
+findSanta (Universe gr ns) =
+    let xs = G.rdfs [ns ! "YOU"] gr
+        ys = G.rdfs [ns ! "SAN"] gr
+        meet = head $ xs `intersect` ys
+    in fromJust (elemIndex meet xs) + fromJust (elemIndex meet ys) - 2
 
 solutionA :: Solution
 solutionA = Solution $ totalOrbits . parse
 
 solutionB :: Solution
-solutionB = Solution \input ->
-    let path = findSanta $ parse input
-    in length path - 3
+solutionB = Solution $ findSanta . parse
