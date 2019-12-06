@@ -17,6 +17,8 @@ description:         Please see the README
 dependencies:
 - base >= 4.7 && < 5
 - containers
+- fgl
+- microlens-platform
 - mtl
 - parsec
 - split
