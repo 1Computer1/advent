@@ -8,8 +8,8 @@ import           Control.Monad.Writer
 import           Data.Functor
 import           Data.List
 import           Data.List.Split
-import qualified Data.Vector as V
-import           Data.Vector (Vector, (!))
+import qualified Data.Vector.Unboxed as V
+import           Data.Vector.Unboxed (Vector, (!))
 import           Lens.Micro.Platform
 
 data Memory = Memory
@@ -70,13 +70,10 @@ runProgram inp xs = flip appEndo [] . execWriter $ evalStateT execute (Memory in
 
 execute :: Program ()
 execute = do
-    xs <- use memory
-    i <- use pointer
     op <- readOp
-    runOp op
     case op of
         Halt -> pure ()
-        _    -> execute
+        _    -> runOp op >> execute
 
 runOp :: Op -> Program ()
 runOp = \case
@@ -126,7 +123,7 @@ readOp' i0 n ms = case n of
     7 -> Less <$> v <*> v <*> p
     8 -> Equal <$> v <*> v <*> p
     99 -> pure Halt
-    n -> error $ "unknown op " <> show n
+    _ -> error $ "unknown op " <> show n
     where
         v = do
             xs <- use memory
