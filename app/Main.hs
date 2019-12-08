@@ -18,6 +18,7 @@ import qualified Advent.Year2019.Day04
 import qualified Advent.Year2019.Day05
 import qualified Advent.Year2019.Day06
 import qualified Advent.Year2019.Day07
+import qualified Advent.Year2019.Day08
 
 import           Advent.Types
 import           Control.DeepSeq (force)
