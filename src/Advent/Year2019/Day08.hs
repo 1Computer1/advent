@@ -12,7 +12,7 @@ solutionA = Solution \input ->
     in count '1' l * count '2' l
 
 solutionB :: Solution
-solutionB = Solution \input ->
+solutionB = SolutionS \input ->
     let ls = layers 25 6 input
         ys = map (pixelToChar . foldMap pixelFromChar) $ transpose ls
     in unlines $ chunksOf 25 ys
