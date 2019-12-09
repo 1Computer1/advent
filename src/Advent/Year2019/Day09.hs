@@ -6,15 +6,15 @@ import           Advent.Types
 import           Control.Monad.State
 import           Control.Monad.Writer
 import           Data.List.Split
-import qualified Data.Vector.Unboxed as V
-import           Data.Vector.Unboxed (Vector, (!), (!?))
+import qualified Data.IntMap as M
+import           Data.IntMap (IntMap, (!))
 import           Lens.Micro.Platform
 
 data Memory = Memory
-    { _inputs  :: [Int]
-    , _memory  :: Vector Int
-    , _pointer :: Int
-    , _relBase :: Int
+    { _inputs  :: ![Int]
+    , _memory  :: !(IntMap Int)
+    , _pointer :: !Int
+    , _relBase :: !Int
     }
     deriving (Show)
 
@@ -25,15 +25,15 @@ type Program = StateT Memory (Writer (DList Int))
 type DList a = Endo [a]
 
 data Op
-    = Add Int Int Int
-    | Mul Int Int Int
-    | Input Int
-    | Output Int
-    | JumpT Int Int
-    | JumpF Int Int
-    | Less Int Int Int
-    | Equal Int Int Int
-    | RelOffset Int
+    = Add !Int !Int !Int
+    | Mul !Int !Int !Int
+    | Input !Int
+    | Output !Int
+    | JumpT !Int !Int
+    | JumpF !Int !Int
+    | Less !Int !Int !Int
+    | Equal !Int !Int !Int
+    | RelOffset !Int
     | Halt
 
 solutionA :: Solution
@@ -42,10 +42,10 @@ solutionA = Solution $ runProgram [1] . parse
 solutionB :: Solution
 solutionB = Solution $ runProgram [2] . parse
 
-parse :: String -> Vector Int
-parse = V.fromList . map read . splitOn ","
+parse :: String -> IntMap Int
+parse = M.fromList . zip [0..] . map read . splitOn ","
 
-runProgram :: [Int] -> Vector Int -> [Int]
+runProgram :: [Int] -> IntMap Int -> [Int]
 runProgram inp xs = flip appEndo [] . execWriter . evalStateT execute $ Memory inp xs 0 0
 
 execute :: Program ()
@@ -70,7 +70,9 @@ runOp = \case
 
 infix 4 &=
 (&=) :: Int -> Int -> Program ()
-i &= x = resizeMemory i >> memory . ix i .= x
+i &= x = do
+    xs <- use memory
+    memory .= M.insert i x xs
 
 move :: Program ()
 move = pointer %= succ
@@ -132,13 +134,7 @@ readOp' i0 n ms = case n of
         index :: Int -> Program Int
         index i = do
             xs <- use memory
-            pure $ maybe 0 id (xs !? i)
-
-resizeMemory :: Int -> Program ()
-resizeMemory i = memory %= ensureLargeEnough i
-
-ensureLargeEnough :: Int -> Vector Int -> Vector Int
-ensureLargeEnough i v = v <> V.replicate (i - V.length v + 1) 0
+            pure $ M.findWithDefault 0 i xs
 
 -- Digits are indexed as in 43210
 digits :: Int -> [Int]
