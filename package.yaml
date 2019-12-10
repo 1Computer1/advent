@@ -26,6 +26,7 @@ dependencies:
 - vector
 
 default-extensions:
+- BangPatterns
 - BlockArguments
 - ConstraintKinds
 - DataKinds
