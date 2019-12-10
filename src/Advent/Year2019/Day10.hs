@@ -7,7 +7,9 @@ import           Data.Ord
 import qualified Data.IntSet as S
 import           Data.IntSet (IntSet)
 
-data V = V !Int !Int
+data V
+    = V {-# UNPACK #-} !Int
+        {-# UNPACK #-} !Int
     deriving (Eq, Ord)
 
 -- Vector addition
@@ -42,8 +44,8 @@ clockwiseOf (V x1 y1) (V x2 y2) = x1 * y2 - x2 * y1 >= 0
 
 data Area = Area
     { places :: !IntSet
-    , maxX   :: !Int
-    , maxY   :: !Int
+    , maxX   :: {-# UNPACK #-} !Int
+    , maxY   :: {-# UNPACK #-} !Int
     }
 
 solutionA :: Solution
