@@ -4,11 +4,11 @@ import           Advent.Types
 import           Control.Monad
 import           Data.List
 import           Data.Ord
-import qualified Data.Set as S
-import           Data.Set (Set)
+import qualified Data.IntSet as S
+import           Data.IntSet (IntSet)
 
 data V = V !Int !Int
-    deriving (Eq, Ord, Show)
+    deriving (Eq, Ord)
 
 -- Vector addition
 infixl 6 +., -.
@@ -41,38 +41,39 @@ clockwiseOf :: V -> V -> Bool
 clockwiseOf (V x1 y1) (V x2 y2) = x1 * y2 - x2 * y1 >= 0
 
 data Area = Area
-    { places :: !(Set V)
+    { places :: !IntSet
     , maxX   :: !Int
     , maxY   :: !Int
     }
-    deriving (Show)
 
 solutionA :: Solution
 solutionA = Solution \input ->
-    let area = parse input
-        xs = S.toList $ places area
+    let (xs, area) = parse input
     in maximum $ map (length . filterVisible area) xs
 
 solutionB :: Solution
 solutionB = Solution \input ->
-    let area = parse input
-        xs = S.toList $ places area
+    let (xs, area) = parse input
         cwAngle = angle $ V 0 (-1)
         rays = sortOn (cwAngle . fst) . maximumBy (comparing length) $ map (filterVisible area) xs
         toBeLasered = concat . transpose $ map snd rays
         V x y = toBeLasered !! 199
     in 100 * x + y
 
-parse :: String -> Area
+parse :: String -> ([V], Area)
 parse input =
-    let maxX = length . head $ lines input
-        maxY = length $ lines input
-        places = S.fromList do
-            (y, row) <- zip [0..maxY] $ lines input
-            (x, obj) <- zip [0..maxX] $ row
+    let xs = lines input
+        maxX = length $ head xs
+        maxY = length xs
+        places = do
+            (y, row) <- zip [0..maxY] xs
+            (x, obj) <- zip [0..maxX] row
             guard $ obj == '#'
-            pure $ V x y
-    in Area places maxX maxY
+            pure (V x y, cantor $ V x y)
+    in (map fst places, Area (S.fromList $ map snd places) maxX maxY)
+
+cantor :: V -> Int
+cantor (V x y) = (x + y) * (x + y + 1) `div` 2 + y
 
 filterVisible :: Area -> V -> [(V, [V])]
 filterVisible area@(Area { maxX, maxY }) p = xs
@@ -81,7 +82,7 @@ filterVisible area@(Area { maxX, maxY }) p = xs
         xs = filter (not . null . snd) $ map (\m -> (m, filterVisibleOn area m p)) ms
 
 filterVisibleOn :: Area -> V -> V -> [V]
-filterVisibleOn area m x = filter (`S.member` places area) . takeWhile (inBounds area) $ line m x
+filterVisibleOn area m x = filter (\v -> cantor v `S.member` places area) . takeWhile (inBounds area) $ line m x
 
 inBounds :: Area -> V -> Bool
 inBounds (Area { maxX, maxY }) (V x y) = 0 <= x && x <= maxX && 0 <= y && y <= maxY 
