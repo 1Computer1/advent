@@ -36,19 +36,16 @@ newtype Program a = Program { unProgram :: StateT Machine (Writer (DList Int)) a
 instance MonadFail Program where
     fail = error
 
-data Mode = Pos | Imm | Rel
-    deriving (Show)
-
-data Op a
-    = Add !a !a !a
-    | Mul !a !a !a
-    | Inp !a
-    | Out !a
-    | Jnz !a !a
-    | Jez !a !a
-    | Lt  !a !a !a
-    | Eq  !a !a !a
-    | Rbo !a
+data Op
+    = Add {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+    | Mul {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+    | Inp {-# UNPACK #-} !Int
+    | Out {-# UNPACK #-} !Int
+    | Jnz {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+    | Jez {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+    | Lt  {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+    | Eq  {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+    | Rbo {-# UNPACK #-} !Int
     | End
     deriving (Show)
 
@@ -68,7 +65,7 @@ execute = do
         End -> pure ()
         _   -> runOp op >> execute
 
-runOp :: Op Int -> Program ()
+runOp :: Op -> Program ()
 runOp op = do
     xs <- use memory
     let val j = M.findWithDefault 0 j xs
@@ -99,7 +96,7 @@ readInput = do
     inputs .= xs
     pure x
 
-readOp :: Program (Op Int)
+readOp :: Program Op
 readOp = do
     xs <- use memory
     pt <- use pointer
