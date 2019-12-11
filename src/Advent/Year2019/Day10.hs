@@ -23,21 +23,11 @@ infixl 7 @.
 (@.) :: Int -> V -> V
 k @. V x y = V (k * x) (k * y)
 
--- Dot product
-infixl 7 *.
-(*.) :: V -> V -> Int
-V x1 y1 *. V x2 y2 = (x1 * x2) + (y1 * y2)
-
-magnitude :: V -> Double
-magnitude x = sqrt . fromIntegral $ x *. x
-
 -- In clockwise direction
 angle :: V -> V -> Double
-angle x y =
-    let dot = x *. y
-        mag = magnitude x * magnitude y
-        theta = acos (fromIntegral dot / mag)
-    in if x `clockwiseOf` y then theta else 2 * pi - theta
+angle (V x1 y1) (V x2 y2) =
+    let θ = atan2 (fromIntegral y2) (fromIntegral x2) - atan2 (fromIntegral y1) (fromIntegral x1)
+    in if θ < 0 then 2 * pi + θ else θ
 
 clockwiseOf :: V -> V -> Bool
 clockwiseOf (V x1 y1) (V x2 y2) = x1 * y2 - x2 * y1 >= 0
@@ -78,9 +68,10 @@ cantor :: V -> Int
 cantor (V x y) = (x + y) * (x + y + 1) `div` 2 + y
 
 filterVisible :: Area -> V -> [(V, [V])]
-filterVisible area@(Area { maxX, maxY }) p = xs
+filterVisible area@(Area { maxX, maxY }) p@(V px py) = xs
     where
-        ms = concatMap similar $ directions (max maxX maxY)
+        bounds = [px, py, maxX - px, maxY - py]
+        ms = concatMap similar $ directions (maximum bounds)
         xs = filter (not . null . snd) $ map (\m -> (m, filterVisibleOn area m p)) ms
 
 filterVisibleOn :: Area -> V -> V -> [V]
