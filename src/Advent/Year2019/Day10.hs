@@ -10,13 +10,11 @@ import           Data.IntSet (IntSet)
 data V
     = V {-# UNPACK #-} !Int
         {-# UNPACK #-} !Int
-    deriving (Eq, Ord)
 
 -- Vector addition
-infixl 6 +., -.
-(+.), (-.) :: V -> V -> V
+infixl 6 +.
+(+.) :: V -> V -> V
 V x1 y1 +. V x2 y2 = V (x1 + x2) (y1 + y2)
-V x1 y1 -. V x2 y2 = V (x1 - x2) (y1 - y2)
 
 -- Scalar multiplication
 infixl 7 @.
@@ -28,9 +26,6 @@ angle :: V -> V -> Double
 angle (V x1 y1) (V x2 y2) =
     let θ = atan2 (fromIntegral y2) (fromIntegral x2) - atan2 (fromIntegral y1) (fromIntegral x1)
     in if θ < 0 then 2 * pi + θ else θ
-
-clockwiseOf :: V -> V -> Bool
-clockwiseOf (V x1 y1) (V x2 y2) = x1 * y2 - x2 * y1 >= 0
 
 data Area = Area
     { places :: !IntSet
