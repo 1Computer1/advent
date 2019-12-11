@@ -17,6 +17,7 @@ description:         Please see the README
 dependencies:
 - base >= 4.7 && < 5
 - containers
+- dlist
 - fgl
 - microlens-platform
 - mtl
@@ -30,10 +31,14 @@ default-extensions:
 - BlockArguments
 - ConstraintKinds
 - DataKinds
+- DeriveFoldable
+- DeriveFunctor
+- DeriveTraversable
 - EmptyCase
 - FlexibleContexts
 - FlexibleInstances
 - FunctionalDependencies
+- GeneralizedNewtypeDeriving
 - GADTs
 - KindSignatures
 - LambdaCase
