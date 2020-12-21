@@ -21,6 +21,14 @@ common shared
 library
   import: shared
   hs-source-dirs: src
+  build-depends:
+      containers
+    , fgl
+    , parsec
+    , split
+    , transformers
+    , mtl
+    , vector
   exposed-modules:
     Advent.Solution
     Advent.Year2020.Day01
