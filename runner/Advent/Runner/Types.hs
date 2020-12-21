@@ -1,4 +1,4 @@
-module Types
+module Advent.Runner.Types
     ( Year
     , Day
     , Part(..)
@@ -8,10 +8,10 @@ module Types
     ) where
 
 type Year = Int
-
 type Day = Int
 
-data Part = A | B deriving Show
+data Part = A | B
+    deriving (Show)
 
 partFromChar :: Char -> Part
 partFromChar c
@@ -20,9 +20,13 @@ partFromChar c
     | otherwise     = error "unsupported part"
 
 showPartLower :: Part -> String
-showPartLower = \case
+showPartLower p = case p of
     A -> "a"
     B -> "b"
 
 padDay :: Day -> String
-padDay n = let s = show n in if length s == 1 then '0':s else s
+padDay n =
+    let s = show n
+    in if length s == 1
+        then '0':s
+        else s

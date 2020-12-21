@@ -1,14 +1,14 @@
-module Interface
+module Advent.Runner.CLI
     ( Options(..)
     , getOptions
     ) where
 
+import           Advent.Runner.Types
 import           Options.Applicative
 import qualified Text.Parsec as P
-import           Types
 
 data Options = Options
-    { year :: Year
+    { year     :: Year
     , problems :: [(Day, Part)]
     }
 
@@ -30,6 +30,6 @@ argP :: Parsec (Day, Part)
 argP = (,) <$> (read <$> P.many1 P.digit) <*> (partFromChar <$> P.oneOf "abAB")
 
 hush :: Either a b -> Maybe b
-hush = \case
-    Left _ -> Nothing
+hush e = case e of
+    Left _  -> Nothing
     Right x -> Just x

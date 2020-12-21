@@ -1,13 +1,13 @@
-{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE GADTs #-}
 
-module Advent.Types
+module Advent.Solution
     ( Solution(..)
     , runSolution
     ) where
 
-data Solution
-    = forall a. Show a => Solution (String -> a)
-    | SolutionS (String -> String)
+data Solution where
+    Solution  :: Show a => (String -> a) -> Solution
+    SolutionS :: (String -> String) -> Solution
 
 runSolution :: Solution -> String -> String
 runSolution s i = case s of

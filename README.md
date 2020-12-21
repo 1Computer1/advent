@@ -1,12 +1,14 @@
-# Advent of Code Solutions
+# Advent of Code Template
 
-I'm probably not gonna do all the problems, but I'm gonna pretend like I'm gonna.  
+This workspace is sorta convenient:  
 
-This workspace is convenient, kinda:  
+- `generate.py <year>` generates files in `src/Advent/Year<year>` and the imports in `app/Main.hs` and adds to `exposed-modules` in `advent.cabal`.
 
-- `generate.py <year> <start> <end>` makes all the files between two days for a year.
-- `Boilerplate` generates a `run` function that runs the solution given the year, day, and subproblem (A or B).
-- `Advent.Types` has a `Solution` type that encapsulates a solution.
+- `Advent.Runner.TH` generates a function that runs the solution given the year, day, and subproblem (A or B).
+
+- `Advent.Solution` has a `Solution` type that encapsulates a solution.
+
+- To run a solution, simply do `cabal run advent -- <day><part>...`, for example, `cabal run advent -- 1a 1b`.
 
 Feel free to use this as a template for yourself, maybe add tests and benchmarks or something.  
-Checkout the `no-solutions` branch for the workspace with no spoilers that you can use right away.  
+My own solutions will be on a separate branch.  
