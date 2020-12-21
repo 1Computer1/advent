@@ -5,6 +5,32 @@ module Main
     ( main
     ) where
 
+import qualified Advent.Year2020.Day01
+import qualified Advent.Year2020.Day02
+import qualified Advent.Year2020.Day03
+import qualified Advent.Year2020.Day04
+import qualified Advent.Year2020.Day05
+import qualified Advent.Year2020.Day06
+import qualified Advent.Year2020.Day07
+import qualified Advent.Year2020.Day08
+import qualified Advent.Year2020.Day09
+import qualified Advent.Year2020.Day10
+import qualified Advent.Year2020.Day11
+import qualified Advent.Year2020.Day12
+import qualified Advent.Year2020.Day13
+import qualified Advent.Year2020.Day14
+import qualified Advent.Year2020.Day15
+import qualified Advent.Year2020.Day16
+import qualified Advent.Year2020.Day17
+import qualified Advent.Year2020.Day18
+import qualified Advent.Year2020.Day19
+import qualified Advent.Year2020.Day20
+import qualified Advent.Year2020.Day21
+import qualified Advent.Year2020.Day22
+import qualified Advent.Year2020.Day23
+import qualified Advent.Year2020.Day24
+import qualified Advent.Year2020.Day25
+
 import Advent.Runner.CLI
 import Advent.Runner.Types
 import Advent.Runner.TH

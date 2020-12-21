@@ -23,6 +23,31 @@ library
   hs-source-dirs: src
   exposed-modules:
     Advent.Solution
+    Advent.Year2020.Day01
+    Advent.Year2020.Day02
+    Advent.Year2020.Day03
+    Advent.Year2020.Day04
+    Advent.Year2020.Day05
+    Advent.Year2020.Day06
+    Advent.Year2020.Day07
+    Advent.Year2020.Day08
+    Advent.Year2020.Day09
+    Advent.Year2020.Day10
+    Advent.Year2020.Day11
+    Advent.Year2020.Day12
+    Advent.Year2020.Day13
+    Advent.Year2020.Day14
+    Advent.Year2020.Day15
+    Advent.Year2020.Day16
+    Advent.Year2020.Day17
+    Advent.Year2020.Day18
+    Advent.Year2020.Day19
+    Advent.Year2020.Day20
+    Advent.Year2020.Day21
+    Advent.Year2020.Day22
+    Advent.Year2020.Day23
+    Advent.Year2020.Day24
+    Advent.Year2020.Day25
 
 library runner
   import: shared
