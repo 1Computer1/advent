@@ -8,7 +8,7 @@ This workspace is sorta convenient:
 
 - `Advent.Solution` has a `Solution` type that encapsulates a solution.
 
-- To run a solution, simply do `cabal run advent -- <day><part>...`, for example, `cabal run advent -- 1a 1b`.
+- To run a solution, simply do `cabal run advent -- <year> <day><part>...`, for example, `cabal run advent -- 2020 1a 1b`.
 
 Feel free to use this as a template for yourself, maybe add tests and benchmarks or something.  
 My own solutions will be on a separate branch.  
