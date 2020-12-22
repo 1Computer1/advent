@@ -22,7 +22,8 @@ library
   import: shared
   hs-source-dirs: src
   build-depends:
-      containers
+      bimap
+    , containers
     , fgl
     , parsec
     , split
