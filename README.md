@@ -6,8 +6,6 @@ This workspace is sorta convenient:
 
 - `Advent.Runner.TH` generates a function that runs the solution given the year, day, and subproblem (A or B).
 
-- `Advent.Solution` has a `Solution` type that encapsulates a solution.
-
 - To run a solution, simply do `cabal run advent -- <year> <day><part>...`, for example, `cabal run advent -- 2020 1a 1b`.
 
 Feel free to use this as a template for yourself, maybe add tests and benchmarks or something.  
