@@ -6,18 +6,13 @@ import re
 import sys
 
 template = lambda year, day: f'''
-module Advent.Year{year}.Day{day.zfill(2)}
-    ( solutionA
-    , solutionB
-    ) where
+module Advent.Year{year}.Day{day.zfill(2)} where
 
-import Advent.Solution
+solutionA :: String -> Int
+solutionA input = undefined
 
-solutionA :: Solution
-solutionA = undefined
-
-solutionB :: Solution
-solutionB = undefined
+solutionB :: String -> Int
+solutionB input = undefined
 '''.lstrip("\n")
 
 if len(sys.argv) >= 2:
@@ -44,7 +39,7 @@ if len(sys.argv) >= 2:
             s = f'Advent.Year{year}.Day{day.zfill(2)}'
             if s not in content:
                 exposed += '\n    ' + s
-        rep = re.sub(r'(exposed-modules:.+Advent.Solution)', f'\\1{exposed}', content, count=1, flags=re.DOTALL)
+        rep = re.sub(r'(exposed-modules:.+-- solutions)', f'\\1{exposed}', content, count=1, flags=re.DOTALL)
         f.write(rep)
 
     pathlib.Path(f'src/Advent/Year{year}/').mkdir(parents=True, exist_ok=True)

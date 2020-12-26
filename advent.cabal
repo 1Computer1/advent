@@ -22,7 +22,7 @@ library
   import: shared
   hs-source-dirs: src
   exposed-modules:
-    Advent.Solution
+    -- solutions
 
 library runner
   import: shared
