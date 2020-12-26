@@ -1,11 +1,7 @@
 {-# LANGUAGE NamedFieldPuns #-}
 
-module Advent.Year2020.Day08
-    ( solutionA
-    , solutionB
-    ) where
+module Advent.Year2020.Day08 where
 
-import Advent.Solution
 import Data.List
 import qualified Data.Map.Strict as M
 import qualified Data.Vector as V
@@ -28,11 +24,11 @@ data EvalState = EvalState
     , insts    :: V.Vector (Inst, Int)
     }
 
-solutionA :: Solution
-solutionA = Solution $ \input ->
-    let insts = parseInput input
+solutionA :: String -> Int
+solutionA input = fst $ runState evalUntilRepeat st
+    where
+        insts = parseInput input
         st = EvalState { accum = 0, index = 0, useCount = M.empty, insts }
-    in fst $ runState evalUntilRepeat st
 
 parseInput :: String -> V.Vector (Inst, Int)
 parseInput xs = V.fromList . map parseLine $ lines xs
@@ -60,13 +56,13 @@ evalStep = do
         Acc -> modify' (\e -> e { index = index + 1, accum = accum + n })
         Jmp -> modify' (\e -> e { index = index + n })
 
-solutionB :: Solution
-solutionB = Solution $ \input ->
-    let base = parseInput input
+solutionB :: String -> Int
+solutionB input = fst $ runState (evalParallel (length base)) st
+    where
+        base = parseInput input
         is = V.findIndices (\(x, _) -> x == Nop || x == Jmp) base
         xs = fmap (\i -> let (x, n) = base V.! i in base V.// [(i, (invert x, n))]) is
         st = fmap (\x -> EvalState { accum = 0, index = 0, useCount = M.empty, insts = x }) xs
-    in fst $ runState (evalParallel (length base)) st
 
 evalParallel :: Int -> State (V.Vector EvalState) Int
 evalParallel target = do

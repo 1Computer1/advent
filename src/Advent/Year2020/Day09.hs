@@ -1,17 +1,13 @@
 {-# LANGUAGE NamedFieldPuns #-}
 
-module Advent.Year2020.Day09
-    ( solutionA
-    , solutionB
-    ) where
+module Advent.Year2020.Day09 where
 
-import Advent.Solution
 import Data.List.Split
 import qualified Data.Sequence as S
 import Data.Monoid
 
-solutionA :: Solution
-solutionA = Solution $ \input ->
+solutionA :: String -> Int
+solutionA input =
     let ns = map read $ lines input
         windows = divvy 26 1 ns
         Just n = getFirst $ foldMap (First . invalidWindow) windows
@@ -56,8 +52,8 @@ sumToN target s =
         LT -> sumToN target (takeMore s)
         GT -> sumToN target (takeLess s)
 
-solutionB :: Solution
-solutionB = Solution $ \input ->
+solutionB :: String -> Int
+solutionB input =
     let ns = map read $ lines input
         windows = divvy 26 1 ns
         Just n = getFirst $ foldMap (First . invalidWindow) windows

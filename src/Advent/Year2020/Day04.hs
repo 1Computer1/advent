@@ -1,13 +1,9 @@
 {-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE RecordWildCards  #-}
 
-module Advent.Year2020.Day04
-    ( solutionA
-    , solutionB
-    ) where
+module Advent.Year2020.Day04 where
 
 import Prelude hiding ((>>=), (>>), fail)
-import Advent.Solution
 import Data.Char
 import Data.List.Split
 import Data.Maybe
@@ -17,10 +13,9 @@ data Passport = Passport
     { byr, iyr, eyr, hgt, hcl, ecl, pid, cid :: Maybe String
     }
 
-solutionA :: Solution
-solutionA = Solution $ \input ->
-    let ps = parseInput input
-    in length $ filter validPassport ps
+solutionA :: String -> Int
+solutionA input = length $ filter validPassport ps
+    where ps = parseInput input
 
 parseInput :: String -> [Passport]
 parseInput xs = map (parsePassport . map (two . splitOn ":") . splitOneOf " \n") (splitOn "\n\n" xs)
@@ -40,10 +35,9 @@ parseInput xs = map (parsePassport . map (two . splitOn ":") . splitOneOf " \n")
 validPassport :: Passport -> Bool
 validPassport (Passport {..}) = all isJust [byr, iyr, eyr, hgt, hcl, ecl, pid]
 
-solutionB :: Solution
-solutionB = Solution $ \input ->
-    let ps = parseInput input
-    in length $ filter validPassport' ps
+solutionB :: String -> Int
+solutionB input = length $ filter validPassport' ps
+    where ps = parseInput input
 
 validPassport' :: Passport -> Bool
 validPassport' (Passport {..}) = do

@@ -31,7 +31,7 @@ library
     , mtl
     , vector
   exposed-modules:
-    Advent.Solution
+    -- solutions
     Advent.Year2020.Day01
     Advent.Year2020.Day02
     Advent.Year2020.Day03

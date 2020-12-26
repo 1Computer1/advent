@@ -1,20 +1,16 @@
-module Advent.Year2020.Day10
-    ( solutionA
-    , solutionB
-    ) where
+module Advent.Year2020.Day10 where
 
-import Advent.Solution
 import Data.List
 
-solutionA :: Solution
-solutionA = Solution $ \input ->
+solutionA :: String -> Int
+solutionA input =
     let ns = map read $ lines input :: [Int]
         ms = 0 : sort ns <> [maximum ns + 3]
         ds = zipWith (flip (-)) ms (tail ms)
     in length (filter (== 1) ds) * length (filter (== 3) ds)
 
-solutionB :: Solution
-solutionB = Solution $ \input ->
+solutionB :: String -> Int
+solutionB input =
     let ns = map read $ lines input :: [Int]
         ms = 0 : sort ns <> [maximum ns + 3]
     in countPaths ms

@@ -1,12 +1,7 @@
-module Advent.Year2020.Day15
-    ( solutionA
-    , solutionB
-    ) where
+module Advent.Year2020.Day15 where
 
-import Advent.Solution
-
-solutionA :: Solution
+solutionA :: String -> Int
 solutionA = undefined
 
-solutionB :: Solution
+solutionB :: String -> Int
 solutionB = undefined

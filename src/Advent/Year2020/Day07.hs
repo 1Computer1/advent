@@ -1,18 +1,14 @@
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE ViewPatterns  #-}
 
-module Advent.Year2020.Day07
-    ( solutionA
-    , solutionB
-    ) where
+module Advent.Year2020.Day07 where
 
-import Advent.Solution
 import qualified Data.Bimap as M
 import qualified Data.Graph.Inductive as G
 import qualified Text.Parsec as P
 
-solutionA :: Solution
-solutionA = Solution $ \input ->
+solutionA :: String -> Int
+solutionA input =
     let xs = parseInput input
         (nm, gr) = constructGraph xs
         shinygold = nm M.! "shiny gold"
@@ -56,8 +52,8 @@ constructGraph xs = (nodeMap, G.mkGraph nodes edges)
         nodes = map (, ()) [0..length xs - 1]
         edges = concatMap (\(from, tos) -> map (\(w, to) -> (nodeMap M.! from, nodeMap M.! to, w)) tos) xs
 
-solutionB :: Solution
-solutionB = Solution $ \input ->
+solutionB :: String -> Int
+solutionB input =
     let xs = parseInput input
         (nm, gr) = constructGraph xs
         shinygold = nm M.! "shiny gold"

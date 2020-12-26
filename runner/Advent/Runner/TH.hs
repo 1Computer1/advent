@@ -21,24 +21,33 @@ getAvailableSolutions = do
 makeSolutionGetter :: Q Exp
 makeSolutionGetter  = do
     solutions <- runIO getAvailableSolutions
-    let errorClause = Match WildP (NormalB (ConE (mkName "Nothing"))) []
     param <- newName "t"
-    pure $ LamE [VarP param] $
-        CaseE (VarE param) (concatMap (uncurry makeYearMatches) solutions <> [errorClause])
+    cont <- newName "k"
+    let errorClause = Match
+            WildP
+            (NormalB (AppE (VarE cont)
+                (SigE
+                    (ConE (mkName "Nothing"))
+                    (AppT
+                        (ConT (mkName "Maybe"))
+                        (AppT (AppT ArrowT (ConT (mkName "String"))) (TupleT 0))))))
+            []
+    pure $ LamE [VarP param, VarP cont] $
+        CaseE (VarE param) (concatMap (uncurry (makeYearMatches cont)) solutions <> [errorClause])
 
-makeYearMatches :: Int -> [Int] -> [Match]
-makeYearMatches year days = concatMap (makeDayMatches year) days
+makeYearMatches :: Name -> Int -> [Int] -> [Match]
+makeYearMatches cont year days = concatMap (makeDayMatches cont year) days
 
-makeDayMatches :: Int -> Int -> [Match]
-makeDayMatches year day =
+makeDayMatches :: Name -> Int -> Int -> [Match]
+makeDayMatches cont year day =
     let yearPat = litPInt year
         dayPat = litPInt day
         partPat s = ConP (mkName s) []
-        mk s p = Match (TupP [yearPat, dayPat, partPat s]) (NormalB (makeBody year day p)) []
+        mk s p = Match (TupP [yearPat, dayPat, partPat s]) (NormalB (makeBody cont year day p)) []
     in [mk "A" A, mk "B" B]
 
-makeBody :: Int -> Int -> Part -> Exp
-makeBody year day part = AppE (ConE (mkName "Just")) $
+makeBody :: Name -> Int -> Int -> Part -> Exp
+makeBody cont year day part = AppE (VarE cont) $ AppE (ConE (mkName "Just")) $
     VarE . mkName $ "Advent.Year" <> show year <> ".Day" <> padDay day <> ".solution" <> show part
 
 litPInt :: Integral a => a -> Pat
